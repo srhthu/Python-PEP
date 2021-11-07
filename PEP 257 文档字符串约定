@@ -1,0 +1,73 @@
+# Python如何写文档字符串
+## 文档字符串定义
+文档字符串（Docstring）出现在模块（module）、函数（function）、类（class）、方法（method）的第一句话。  
+例子：
+模块 transformers/trainer.py
+```
+# coding=utf-8
+# Copyright 2020-present the HuggingFace Inc. team.
+# ...
+# See the License for the specific language governing permissions and
+# limitations under the License.
+"""
+The Trainer class, to easily train a 🤗 Transformers from scratch or finetune it on a new task.
+"""
+
+import collections
+import inspect
+```
+函数 transformers/trainer.py
+```
+def default_compute_objective(metrics: Dict[str, float]) -> float:
+    """
+    The default objective to maximize/minimize when doing an hyperparameter search. It is the evaluation loss if no
+    metrics are provided to the :class:`~transformers.Trainer`, the sum of all metrics otherwise.
+
+    Args:
+        metrics (:obj:`Dict[str, float]`): The metrics returned by the evaluate method.
+
+    Return:
+        :obj:`float`: The objective to minimize or maximize
+    """
+```
+类 transformers/models/bert/modeling_bert.py
+```
+class BertPreTrainedModel(PreTrainedModel):
+    """
+    An abstract class to handle weights initialization and a simple interface for downloading and loading pretrained
+    models.
+    """
+```
+方法 transformers/trainer.py中Trainer类的evaluate方法
+```
+def evaluate(
+        self,
+        eval_dataset: Optional[Dataset] = None,
+        ignore_keys: Optional[List[str]] = None,
+        metric_key_prefix: str = "eval",
+    ) -> Dict[str, float]:
+        """
+        Run evaluation and returns metrics.
+
+        The calling script will be responsible for providing a method to compute metrics, as they are task-dependent
+        (pass it to the init :obj:`compute_metrics` argument).
+
+        You can also subclass and override this method to inject custom behavior.
+
+        Args:
+            eval_dataset (:obj:`Dataset`, `optional`):
+                Pass a dataset if you wish to override :obj:`self.eval_dataset`. If it is an :obj:`datasets.Dataset`,
+                columns not accepted by the ``model.forward()`` method are automatically removed. It must implement the
+                :obj:`__len__` method.
+            ignore_keys (:obj:`Lst[str]`, `optional`):
+                A list of keys in the output of your model (if it is a dictionary) that should be ignored when
+                gathering predictions.
+            metric_key_prefix (:obj:`str`, `optional`, defaults to :obj:`"eval"`):
+                An optional prefix to be used as the metrics key prefix. For example the metrics "bleu" will be named
+                "eval_bleu" if the prefix is "eval" (default)
+
+        Returns:
+            A dictionary containing the evaluation loss and the potential metrics computed from the predictions. The
+            dictionary also contains the epoch number which comes from the training state.
+        """
+```
